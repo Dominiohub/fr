@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Interactivo de Anatomía Humana</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            color: #284b8c;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .subtitle {
+            color: #333;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .systems-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+            max-width: 1000px;
+            margin-bottom: 2rem;
+        }
+        
+        .system-card {
+            width: 250px;
+            height: 150px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-align: center;
+        }
+        
+        .system-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .system-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .circulatory {
+            background-color: #f44336;
+        }
+        
+        .respiratory {
+            background-color: #4285f4;
+        }
+        
+        .digestive {
+            background-color: #f4b400;
+        }
+        
+        .nervous {
+            background-color: #9c27b0;
+        }
+        
+        .muscular {
+            background-color: #e91e63;
+        }
+        
+        .instructions {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin-bottom: 2rem;
+        }
+        
+        .instructions h2 {
+            color: #284b8c;
+            margin-bottom: 1rem;
+        }
+        
+        .instructions ol {
+            margin-left: 1.5rem;
+        }
+        
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .content-section {
+            display: none;
+            background-color: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+            margin-bottom: 2rem;
+        }
+        
+        .content-section h2 {
+            color: #284b8c;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .content-section p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .system-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            display: block;
+            margin: 1.5rem auto;
+            border-radius: 8px;
+        }
+        
+        .interactive-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .quiz-section {
+            display: none;
+        }
+        
+        .quiz-question {
+            margin-bottom: 1.5rem;
+        }
+        
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .quiz-option {
+            padding: 0.75rem 1rem;
+            background-color: #f0f2f5;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        
+        .quiz-option:hover {
+            background-color: #e4e6e9;
+        }
+        
+        .quiz-option.correct {
+            background-color: #c8e6c9;
+        }
+        
+        .quiz-option.incorrect {
+            background-color: #ffcdd2;
+        }
+        
+        .quiz-feedback {
+            margin-top: 1rem;
+            font-weight: bold;
+            display: none;
+        }
+        
+        .quiz-next-btn, .start-quiz-btn, .back-to-systems-btn {
+            padding: 0.75rem 1.5rem;
+            background-color: #284b8c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 1rem;
+            align-self: center;
+        }
+        
+        .quiz-next-btn:hover, .start-quiz-btn:hover, .back-to-systems-btn:hover {
+            background-color: #1a3366;
+        }
+        
+        .quiz-results {
+            text-align: center;
+            display: none;
+        }
+        
+        .quiz-score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .part-label {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+        }
+        
+        .fun-fact {
+            background-color: #e3f2fd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #284b8c;
+        }
+        
+        .fun-fact h3 {
+            color: #284b8c;
+            margin-bottom: 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .systems-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .system-card {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Juego Interactivo de Anatomía Humana</h1>
+    <p class="subtitle">Selecciona un sistema del cuerpo humano para aprender más sobre él:</p>
+    
+    <div class="systems-container">
+        <div class="system-card circulatory" onclick="showSystem('circulatory')">
+            <div class="system-icon">❤️</div>
+            <div>Sistema Circulatorio</div>
+        </div>
+        
+        <div class="system-card respiratory" onclick="showSystem('respiratory')">
+            <div class="system-icon">🫁</div>
+            <div>Sistema Respiratorio</div>
+        </div>
+        
+        <div class="system-card digestive" onclick="showSystem('digestive')">
+            <div class="system-icon">🧎</div>
+            <div>Sistema Digestivo</div>
+        </div>
+        
+        <div class="system-card nervous" onclick="showSystem('nervous')">
+            <div class="system-icon">🧠</div>
+            <div>Sistema Nervioso</div>
+        </div>
+        
+        <div class="system-card muscular" onclick="showSystem('muscular')">
+            <div class="system-icon">💪</div>
+            <div>Sistema Muscular</div>
+        </div>
+    </div>
+    
+    <div class="instructions">
+        <h2>¿Cómo jugar?</h2>
+        <ol>
+            <li>Selecciona un sistema del cuerpo humano.</li>
+            <li>Explora la información sobre ese sistema.</li>
+            <li>Pon a prueba tus conocimientos con el quiz.</li>
+            <li>¡Intenta conseguir la puntuación máxima en todos los sistemas!</li>
+        </ol>
+    </div>
+    
+    <!-- Sistema Circulatorio -->
+    <div id="circulatory-content" class="content-section">
+        <h2>Sistema Circulatorio</h2>
+        <p>El sistema circulatorio es responsable de transportar sangre, nutrientes, oxígeno, dióxido de carbono y hormonas por todo el cuerpo. Está compuesto principalmente por el corazón, los vasos sanguíneos (arterias, venas y capilares) y la sangre.</p>
+        
+        <svg viewBox="0 0 500 300" class="system-image">
+            <defs>
+                <radialGradient id="heart-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" stop-color="#ff6b6b" />
+                    <stop offset="100%" stop-color="#c71f1f" />
+                </radialGradient>
+                <linearGradient id="vessel-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#c71f1f" />
+                    <stop offset="50%" stop-color="#ff6b6b" />
+                    <stop offset="100%" stop-color="#4776E6" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Silueta del cuerpo -->
+            <path d="M250,50 Q300,60 300,100 Q300,150 280,200 Q270,230 270,260 Q270,280 250,290 Q230,280 230,260 Q230,230 220,200 Q200,150 200,100 Q200,60 250,50" fill="#f2f2f2" stroke="#999" stroke-width="1" />
+            
+            <!-- Corazón -->
+            <path d="M240,130 Q225,110 210,130 Q200,145 210,160 Q220,175 240,190 Q260,175 270,160 Q280,145 270,130 Q255,110 240,130" fill="url(#heart-gradient)" stroke="#c71f1f" stroke-width="2" />
+            
+            <!-- Arterias y venas principales -->
+            <path d="M240,110 Q240,90 240,70" stroke="url(#vessel-gradient)" stroke-width="6" fill="none" />
+            <path d="M240,190 Q240,210 240,230" stroke="url(#vessel-gradient)" stroke-width="6" fill="none" />
+            <path d="M210,160 Q190,170 170,180" stroke="url(#vessel-gradient)" stroke-width="4" fill="none" />
+            <path d="M270,160 Q290,170 310,180" stroke="url(#vessel-gradient)" stroke-width="4" fill="none" />
+            
+            <!-- Capilares -->
+            <path d="M170,180 Q160,190 150,210 Q140,230 130,250" stroke="#4776E6" stroke-width="2" fill="none" />
+            <path d="M310,180 Q320,190 330,210 Q340,230 350,250" stroke="#4776E6" stroke-width="2" fill="none" />
+            <path d="M240,230 Q260,250 280,270" stroke="#4776E6" stroke-width="2" fill="none" />
+            <path d="M240,230 Q220,250 200,270" stroke="#4776E6" stroke-width="2" fill="none" />
+            
+            <!-- Pequeños vasos sanguíneos -->
+            <g stroke="#4776E6" stroke-width="1" fill="none">
+                <path d="M240,70 Q220,60 200,70" />
+                <path d="M240,70 Q260,60 280,70" />
+                <path d="M150,210 Q140,200 130,210" />
+                <path d="M330,210 Q340,200 350,210" />
+            </g>
+            
+            <!-- Texto explicativo -->
+            <text x="240" y="40" font-family="Arial" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">Sistema Circulatorio</text>
+        </svg>
+        
+        <div>
+            <p class="part-label">El corazón:</p>
+            <p>Es el órgano principal del sistema circulatorio. Funciona como una bomba muscular que impulsa la sangre a través de todo el cuerpo mediante contracciones rítmicas. El corazón adulto late aproximadamente 60-100 veces por minuto.</p>
+            
+            <p class="part-label">Arterias:</p>
+            <p>Son vasos sanguíneos que transportan la sangre desde el corazón hacia los tejidos del cuerpo. Las arterias tienen paredes gruesas y elásticas.</p>
+            
+            <p class="part-label">Venas:</p>
+            <p>Son vasos sanguíneos que transportan la sangre de regreso al corazón. Las venas tienen válvulas unidireccionales que impiden el retroceso de la sangre.</p>
+            
+            <p class="part-label">Capilares:</p>
+            <p>Son vasos sanguíneos microscópicos que conectan las arterias más pequeñas con las venas más pequeñas. A través de las paredes de los capilares se produce el intercambio de sustancias entre la sangre y los tejidos.</p>
+        </div>
+        
+        <div class="fun-fact">
+            <h3>¿Sabías que...?</h3>
+            <p>Si pusiéramos todos los vasos sanguíneos del cuerpo humano en línea recta, se extenderían aproximadamente 100,000 kilómetros, lo suficiente como para dar la vuelta a la Tierra más de dos veces.</p>
+        </div>
+        
+        <div class="interactive-section">
+            <button class="start-quiz-btn" onclick="startQuiz('circulatory')">Comenzar Quiz</button>
+            <button class="back-to-systems-btn" onclick="backToSystems()">Volver a Sistemas</button>
+        </div>
+    </div>
+    
+    <!-- Sistema Respiratorio -->
+    <div id="respiratory-content" class="content-section">
+        <h2>Sistema Respiratorio</h2>
+        <p>El sistema respiratorio es responsable del proceso de respiración, que incluye el intercambio de oxígeno y dióxido de carbono entre el cuerpo y el ambiente. Está compuesto por las vías respiratorias superiores e inferiores.</p>
+        
+        <svg viewBox="0 0 500 300" class="system-image">
+            <defs>
+                <linearGradient id="lung-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ff9aa2" />
+                    <stop offset="100%" stop-color="#e27c88" />
+                </linearGradient>
+                <linearGradient id="trachea-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f0f0f0" />
+                    <stop offset="100%" stop-color="#d4d4d4" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Silueta del torso -->
+            <path d="M250,50 Q310,60 320,100 Q330,150 310,200 Q290,230 290,260 Q290,280 250,290 Q210,280 210,260 Q210,230 190,200 Q170,150 180,100 Q190,60 250,50" fill="#f2f2f2" stroke="#999" stroke-width="1" />
+            
+            <!-- Tráquea -->
+            <path d="M250,60 L250,130" stroke="url(#trachea-gradient)" stroke-width="12" stroke-linecap="round" fill="none" />
+            <path d="M250,130 L210,160" stroke="#d4d4d4" stroke-width="8" stroke-linecap="round" fill="none" />
+            <path d="M250,130 L290,160" stroke="#d4d4d4" stroke-width="8" stroke-linecap="round" fill="none" />
+            
+            <!-- Anillos traqueales -->
+            <path d="M246,70 L254,70" stroke="#999" stroke-width="2" fill="none" />
+            <path d="M245,80 L255,80" stroke="#999" stroke-width="2" fill="none" />
+            <path d="M244,90 L256,90" stroke="#999" stroke-width="2" fill="none" />
+            <path d="M244,100 L256,100" stroke="#999" stroke-width="2" fill="none" />
+            <path d="M245,110 L255,110" stroke="#999" stroke-width="2" fill="none" />
+            <path d="M246,120 L254,120" stroke="#999" stroke-width="2" fill="none" />
+            
+            <!-- Pulmón izquierdo -->
+            <path d="M200,160 Q190,180 190,200 Q190,220 200,240 Q210,250 220,240 Q230,230 240,220 L240,150 Q220,150 200,160" fill="url(#lung-gradient)" stroke="#e27c88" stroke-width="2" />
+            
+            <!-- Pulmón derecho (tres lóbulos) -->
+            <path d="M300,160 Q310,180 310,200 Q310,220 300,240 Q290,250 280,240 Q270,230 260,220 L260,150 Q280,150 300,160" fill="url(#lung-gradient)" stroke="#e27c88" stroke-width="2" />
+            <path d="M300,180 L305,180" stroke="#e27c88" stroke-width="1" />
+            <path d="M300,210 L305,210" stroke="#e27c88" stroke-width="1" />
+            
+            <!-- Bronquiolos -->
+            <g stroke="#e27c88" stroke-width="1" fill="none">
+                <path d="M220,180 Q210,185 200,190" />
+                <path d="M220,190 Q215,195 210,200" />
+                <path d="M220,200 Q215,205 210,210" />
+                <path d="M280,180 Q290,185 300,190" />
+                <path d="M280,190 Q285,195 290,200" />
+                <path d="M280,200 Q285,205 290,210" />
+            </g>
+            
+            <!-- Diafragma -->
+            <path d="M190,240 Q250,260 310,240" stroke="#4776E6" stroke-width="3" fill="none" stroke-dasharray="5,3" />
+            
+            <!-- Alvéolos (simplificados como pequeños círculos) -->
+            <g fill="#ff9aa2" stroke="#e27c88" stroke-width="0.5">
+                <circle cx="205" cy="195" r="3" />
+                <circle cx="215" cy="205" r="3" />
+                <circle cx="200" cy="215" r="3" />
+                <circle cx="210" cy="225" r="3" />
+                <circle cx="295" cy="195" r="3" />
+                <circle cx="285" cy="205" r="3" />
+                <circle cx="300" cy="215" r="3" />
+                <circle cx="290" cy="225" r="3" />
+            </g>
+            
+            <!-- Texto explicativo -->
+            <text x="250" y="40" font-family="Arial" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">Sistema Respiratorio</text>
+        </svg>
+        
+        <div>
+            <p class="part-label">Vías respiratorias superiores:</p>
+            <p>Incluyen la nariz, la boca, la faringe y la laringe. Estas estructuras filtran, calientan y humedecen el aire que respiramos.</p>
+            
+            <p class="part-label">Vías respiratorias inferiores:</p>
+            <p>Incluyen la tráquea, los bronquios, los bronquiolos y los alvéolos. Los alvéolos son pequeños sacos aéreos donde ocurre el intercambio gaseoso.</p>
+            
+            <p class="part-label">Pulmones:</p>
+            <p>Son los órganos principales del sistema respiratorio. El pulmón derecho tiene tres lóbulos, mientras que el izquierdo tiene dos (dejando espacio para el corazón).</p>
+            
+            <p class="part-label">Diafragma:</p>
+            <p>Es el músculo principal de la respiración. Su contracción y relajación cambian el volumen de la cavidad torácica, facilitando la entrada y salida de aire.</p>
+        </div>
+        
+        <div class="fun-fact">
+            <h3>¿Sabías que...?</h3>
+            <p>Los pulmones contienen aproximadamente 300 millones de alvéolos, proporcionando una superficie de intercambio gaseoso de hasta 70 metros cuadrados, equivalente al tamaño de una cancha de tenis.</p>
+        </div>
+        
+        <div class="interactive-section">
+            <button class="start-quiz-btn" onclick="startQuiz('respiratory')">Comenzar Quiz</button>
+            <button class="back-to-systems-btn" onclick="backToSystems()">Volver a Sistemas</button>
+        </div>
+    </div>
+    
+    <!-- Sistema Digestivo -->
+    <div id="digestive-content" class="content-section">
+        <h2>Sistema Digestivo</h2>
+        <p>El sistema digestivo es responsable de procesar los alimentos, extraer nutrientes y eliminar desechos. Comprende el tracto gastrointestinal (un tubo largo desde la boca hasta el ano) y órganos accesorios que ayudan en el proceso digestivo.</p>
+        
+        <svg viewBox="0 0 500 300" class="system-image">
+            <defs>
+                <linearGradient id="digestive-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffcc80" />
+                    <stop offset="100%" stop-color="#e68a00" />
+                </linearGradient>
+                <linearGradient id="liver-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#a5673f" />
+                    <stop offset="100%" stop-color="#855030" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Silueta del torso -->
+            <path d="M250,50 Q310,60 320,100 Q330,150 310,200 Q290,230 290,260 Q290,280 250,290 Q210,280 210,260 Q210,230 190,200 Q170,150 180,100 Q190,60 250,50" fill="#f2f2f2" stroke="#999" stroke-width="1" />
+            
+            <!-- Esófago -->
+            <path d="M250,60 L250,110" stroke="#e68a00" stroke-width="8" fill="none" />
+            
+            <!-- Estómago -->
+            <path d="M250,110 Q270,120 280,140 Q290,160 270,180 L250,185" fill="url(#digestive-gradient)" stroke="#e68a00" stroke-width="2" />
+            
+            <!-- Intestino delgado -->
+            <path d="M250,185 Q240,195 230,190 Q220,180 210,190 Q200,200 210,210 Q220,220 230,210 Q240,200 250,210 Q260,220 270,210 Q280,200 270,190 Q260,180 250,185" fill="url(#digestive-gradient)" stroke="#e68a00" stroke-width="2" />
+            
+            <!-- Intestino grueso -->
+            <path d="M210,210 Q190,210 180,200 Q170,190 180,180 Q190,170 200,180 Q210,190 220,180 Q230,170 240,180 Q250,190 260,180 Q270,170 280,180 Q290,190 280,200 Q270,210 250,210" fill="#e68a00" stroke="#ffcc80" stroke-width="2" />
+            <path d="M250,210 L250,250" stroke="#e68a00" stroke-width="8" fill="none" />
+            
+            <!-- Hígado -->
+            <path d="M290,140 Q300,130 310,140 Q320,150 310,160 Q300,170 290,160 Q280,150 290,140" fill="url(#liver-gradient)" stroke="#855030" stroke-width="2" />
+            
+            <!-- Vesícula biliar -->
+            <ellipse cx="295" cy="165" rx="5" ry="8" fill="#4caf50" stroke="#2e7d32" stroke-width="1" />
+            
+            <!-- Páncreas -->
+            <path d="M255,180 Q270,175 285,180 Q290,182 285,185 Q270,190 255,185 Q250,183 255,180" fill="#f48fb1" stroke="#c2185b" stroke-width="1" />
+            
+            <!-- Boca -->
+            <path d="M245,55 Q250,60 255,55" stroke="#333" stroke-width="1.5" fill="none" />
+            
+            <!-- Texto explicativo -->
+            <text x="250" y="40" font-family="Arial" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">Sistema Digestivo</text>
+        </svg>
+        
+        <div>
+            <p class="part-label">Boca:</p>
+            <p>Donde comienza la digestión. Los dientes trituran los alimentos, mientras que la saliva contiene enzimas que comienzan a descomponer los carbohidratos.</p>
+            
+            <p class="part-label">Esófago:</p>
+            <p>Un tubo muscular que conecta la boca con el estómago. Los alimentos son empujados hacia abajo mediante contracciones llamadas peristaltismo.</p>
+            
+            <p class="part-label">Estómago:</p>
+            <p>Un órgano en forma de saco que almacena temporalmente los alimentos. Secreta ácido y enzimas que continúan el proceso digestivo.</p>
+            
+            <p class="part-label">Intestino delgado:</p>
+            <p>Donde ocurre la mayor parte de la digestión y absorción de nutrientes. Tiene aproximadamente 6 metros de longitud.</p>
+            
+            <p class="part-label">Intestino grueso:</p>
+            <p>Absorbe agua y electrolitos, y forma las heces para su eliminación.</p>
+            
+            <p class="part-label">Órganos accesorios:</p>
+            <p>Incluyen el hígado (produce bilis), la vesícula biliar (almacena bilis) y el páncreas (produce enzimas digestivas).</p>
+        </div>
+        
+        <div class="fun-fact">
+            <h3>¿Sabías que...?</h3>
+            <p>El sistema digestivo humano puede producir hasta 7 litros de jugos digestivos por día, lo que ayuda a descomponer los alimentos en nutrientes que el cuerpo puede utilizar.</p>
+        </div>
+        
+        <div class="interactive-section">
+            <button class="start-quiz-btn" onclick="startQuiz('digestive')">Comenzar Quiz</button>
+            <button class="back-to-systems-btn" onclick="backToSystems()">Volver a Sistemas</button>
+        </div>
+    </div>
+    
+    <!-- Sistema Nervioso -->
+    <div id="nervous-content" class="content-section">
+        <h2>Sistema Nervioso</h2>
+        <p>El sistema nervioso es responsable de recibir, procesar y responder a la información del entorno interno y externo. Es el centro de control del cuerpo humano y coordina todas las actividades voluntarias e involuntarias.</p>
+        
+        <svg viewBox="0 0 500 300" class="system-image">
+            <defs>
+                <linearGradient id="brain-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffb6c1" />
+                    <stop offset="100%" stop-color="#e39aac" />
+                </linearGradient>
+                <linearGradient id="nerve-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f5f5f5" />
+                    <stop offset="100%" stop-color="#e0e0e0" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Silueta del cuerpo -->
+            <path d="M250,50 Q300,60 300,100 Q300,150 280,200 Q270,230 270,260 Q270,280 250,290 Q230,280 230,260 Q230,230 220,200 Q200,150 200,100 Q200,60 250,50" fill="#f2f2f2" stroke="#999" stroke-width="1" />
+            
+            <!-- Cerebro -->
+            <ellipse cx="250" cy="75" rx="40" ry="30" fill="url(#brain-gradient)" stroke="#e39aac" stroke-width="2" />
+            
+            <!-- Detalles del cerebro (circunvoluciones) -->
+            <path d="M220,60 Q225,55 230,60" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M230,55 Q235,50 240,55" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M245,50 Q250,45 255,50" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M260,55 Q265,50 270,55" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M275,60 Q280,55 285,60" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M225,70 Q230,65 235,70" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M240,70 Q245,65 250,70" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M255,70 Q260,65 265,70" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M270,70 Q275,65 280,70" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M230,80 Q235,75 240,80" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M245,80 Q250,75 255,80" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M260,80 Q265,75 270,80" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M225,90 Q230,85 235,90" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M240,90 Q245,85 250,90" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M255,90 Q260,85 265,90" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            <path d="M270,90 Q275,85 280,90" stroke="#e39aac" stroke-width="1.5" fill="none" />
+            
+            <!-- Médula espinal -->
+            <path d="M250,100 L250,220" stroke="#e39aac" stroke-width="6" fill="none" />
+            
+            <!-- Nervios principales -->
+            <path d="M250,130 L220,150" stroke="#e39aac" stroke-width="3" fill="none" />
+            <path d="M250,130 L280,150" stroke="#e39aac" stroke-width="3" fill="none" />
+            <path d="M250,160 L220,180" stroke="#e39aac" stroke-width="3" fill="none" />
+            <path d="M250,160 L280,180" stroke="#e39aac" stroke-width="3" fill="none" />
+            <path d="M250,190 L220,210" stroke="#e39aac" stroke-width="3" fill="none" />
+            <path d="M250,190 L280,210" stroke="#e39aac" stroke-width="3" fill="none" />
+            <path d="M250,220 L230,250" stroke="#e39aac" stroke-width="3" fill="none" />
+            <path d="M250,220 L270,250" stroke="#e39aac" stroke-width="3" fill="none" />
+            
+            <!-- Nervios pequeños -->
+            <g stroke="#e39aac" stroke-width="1.5" fill="none">
+                <path d="M220,150 L205,160" />
+                <path d="M220,150 L210,145" />
+                <path d="M280,150 L295,160" />
+                <path d="M280,150 L290,145" />
+                <path d="M220,180 L205,190" />
+                <path d="M220,180 L210,175" />
+                <path d="M280,180 L295,190" />
+                <path d="M280,180 L290,175" />
+                <path d="M220,210 L205,220" />
+                <path d="M220,210 L210,205" />
+                <path d="M280,210 L295,220" />
+                <path d="M280,210 L290,205" />
+                <path d="M230,250 L220,260" />
+                <path d="M230,250 L225,265" />
+                <path d="M270,250 L280,260" />
+                <path d="M270,250 L275,265" />
+            </g>
+            
+            <!-- Neurona (representación simplificada) -->
+            <g transform="translate(170,100) scale(0.6)">
+                <circle cx="50" cy="50" r="15" fill="#ffb6c1" stroke="#e39aac" stroke-width="1" />
+                <path d="M35,50 L20,45" stroke="#e39aac" stroke-width="1.5" fill="none" />
+                <path d="M35,45 L15,35" stroke="#e39aac" stroke-width="1.5" fill="none" />
+                <path d="M40,40 L30,25" stroke="#e39aac" stroke-width="1.5" fill="none" />
+                <path d="M50,35 L50,20" stroke="#e39aac" stroke-width="1.5" fill="none" />
+                <path d="M60,40 L70,25" stroke="#e39aac" stroke-width="1.5" fill="none" />
+                <path d="M65,50 L80,45" stroke="#e39aac" stroke-width="1.5" fill="none" />
+                <path d="M65,55 L85,65" stroke="#e39aac" stroke-width="1.5" fill="none" />
+                <path d="M50,65 L50,85" stroke="#e39aac" stroke-width="2" fill="none" />
+                <path d="M50,85 L55,100" stroke="#e39aac" stroke-width="1" fill="none" />
+                <path d="M50,85 L45,100" stroke="#e39aac" stroke-width="1" fill="none" />
+            </g>
+            
+            <!-- Texto explicativo -->
+            <text x="250" y="40" font-family="Arial" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">Sistema Nervioso</text>
+        </svg>
+        
+        <div>
+            <p class="part-label">Sistema Nervioso Central (SNC):</p>
+            <p>Compuesto por el cerebro y la médula espinal. El cerebro es el órgano principal que procesa la información y controla las funciones corporales. La médula espinal conecta el cerebro con el resto del cuerpo.</p>
+            
+            <p class="part-label">Sistema Nervioso Periférico (SNP):</p>
+            <p>Formado por los nervios que se extienden desde el SNC hacia todo el cuerpo. Incluye nervios sensoriales (llevan información al SNC) y nervios motores (llevan órdenes desde el SNC).</p>
+            
+            <p class="part-label">Neuronas:</p>
+            <p>Son las células nerviosas encargadas de transmitir impulsos eléctricos y químicos. Tienen un cuerpo celular, dendritas (que reciben señales) y un axón (que transmite señales).</p>
+            
+            <p class="part-label">Sinapsis:</p>
+            <p>Es la conexión entre neuronas, donde se comunican mediante neurotransmisores.</p>
+        </div>
+        
+        <div class="fun-fact">
+            <h3>¿Sabías que...?</h3>
+            <p>El cerebro humano contiene aproximadamente 86 mil millones de neuronas, y cada una puede formar hasta 10.000 conexiones sinápticas con otras neuronas, creando una red increíblemente compleja.</p>
+        </div>
+        
+        <div class="interactive-section">
+            <button class="start-quiz-btn" onclick="startQuiz('nervous')">Comenzar Quiz</button>
+            <button class="back-to-systems-btn" onclick="backToSystems()">Volver a Sistemas</button>
+        </div>
+    </div>
+    
+    <!-- Sistema Muscular -->
+    <div id="muscular-content" class="content-section">
+        <h2>Sistema Muscular</h2>
+        <p>El sistema muscular está compuesto por más de 600 músculos que en conjunto representan aproximadamente el 40% del peso corporal. Los músculos son responsables del movimiento, la postura, la generación de calor y la estabilización de las articulaciones.</p>
+        
+        <svg viewBox="0 0 500 300" class="system-image">
+            <defs>
+                <linearGradient id="muscle-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ff8a80" />
+                    <stop offset="100%" stop-color="#d32f2f" />
+                </linearGradient>
+                <linearGradient id="tendon-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#f5f5f5" />
+                    <stop offset="100%" stop-color="#e0e0e0" />
+                </linearGradient>
+            </defs>
+            
+            <!-- Silueta del cuerpo -->
+            <path d="M250,50 Q300,60 300,100 Q300,150 280,200 Q270,230 270,260 Q270,280 250,290 Q230,280 230,260 Q230,230 220,200 Q200,150 200,100 Q200,60 250,50" fill="#f2f2f2" stroke="#999" stroke-width="1" />
+            
+            <!-- Músculos del cuello -->
+            <path d="M235,60 Q225,70 235,85 Q245,90 255,85 Q265,80 265,70 Q255,60 235,60" fill="url(#muscle-gradient)" stroke="#d32f2f" stroke-width="1" opacity="0.8" />
+            <path d="M235,60 L265,70" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            
+            <!-- Músculos del torso -->
+            <path d="M240,85 Q225,95 220,115 Q215,140 225,160 Q235,170 250,170 Q265,170 275,160 Q285,140 280,115 Q275,95 260,85 Q250,80 240,85" fill="url(#muscle-gradient)" stroke="#d32f2f" stroke-width="1" opacity="0.7" />
+            <path d="M250,85 L250,170" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            <path d="M235,110 L265,110" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            <path d="M230,130 L270,130" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            <path d="M230,150 L270,150" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            
+            <!-- Músculos abdominales -->
+            <path d="M235,170 Q225,180 225,200 Q225,220 235,235 Q245,245 255,235 Q265,220 265,200 Q265,180 255,170 Q245,165 235,170" fill="url(#muscle-gradient)" stroke="#d32f2f" stroke-width="1" opacity="0.7" />
+            <path d="M250,170 L250,235" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            <path d="M235,190 L265,190" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            <path d="M235,210 L265,210" stroke="#d32f2f" stroke-width="0.5" fill="none" opacity="0.6" />
+            
+            <!-- Músculos del brazo izquierdo -->
+            <path d="M225,100 Q215,110 205,120 Q195,130 190,150" stroke="#d32f2f" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.8" />
+            <path d="M190,150 Q185,160 180,170 Q175,180 175,190" stroke="#d32f2f" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.8" />
+            <ellipse cx="205" cy="120" rx="5" ry="10" transform="rotate(-45 205 120)" fill="#d32f2f" stroke="none" opacity="0.9" />
+            
+            <!-- Músculos del brazo derecho -->
+            <path d="M275,100 Q285,110 295,120 Q305,130 310,150" stroke="#d32f2f" stroke-width="10" fill="none" stroke-linecap="round" opacity="0.8" />
+            <path d="M310,150 Q315,160 320,170 Q325,180 325,190" stroke="#d32f2f" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.8" />
+            <ellipse cx="295" cy="120" rx="5" ry="10" transform="rotate(45 295 120)" fill="#d32f2f" stroke="none" opacity="0.9" />
+            
+            <!-- Músculos de la pierna izquierda -->
+            <path d="M235,235 Q225,245 225,260 Q225,270 230,280" stroke="#d32f2f" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.8" />
+            
+            <!-- Músculos de la pierna derecha -->
+            <path d="M265,235 Q275,245 275,260 Q275,270 270,280" stroke="#d32f2f" stroke-width="12" fill="none" stroke-linecap="round" opacity="0.8" />
+            
+            <!-- Detalle de fibras musculares -->
+            <g transform="translate(170,220) scale(0.6)">
+                <rect x="40" y="40" width="60" height="20" rx="5" ry="5" fill="#d32f2f" stroke="#9e1a1a" stroke-width="1" />
+                <line x1="50" y1="40" x2="50" y2="60" stroke="#9e1a1a" stroke-width="0.5" />
+                <line x1="60" y1="40" x2="60" y2="60" stroke="#9e1a1a" stroke-width="0.5" />
+                <line x1="70" y1="40" x2="70" y2="60" stroke="#9e1a1a" stroke-width="0.5" />
+                <line x1="80" y1="40" x2="80" y2="60" stroke="#9e1a1a" stroke-width="0.5" />
+                <line x1="90" y1="40" x2="90" y2="60" stroke="#9e1a1a" stroke-width="0.5" />
+            </g>
+            
+            <!-- Músculos faciales simplificados -->
+            <path d="M240,55 Q245,53 250,55 Q255,53 260,55" stroke="#d32f2f" stroke-width="1" fill="none" opacity="0.7" />
+            <path d="M240,60 Q245,62 250,60 Q255,62 260,60" stroke="#d32f2f" stroke-width="1" fill="none" opacity="0.7" />
+            
+            <!-- Texto explicativo -->
+            <text x="250" y="40" font-family="Arial" font-size="16" fill="#333" text-anchor="middle" font-weight="bold">Sistema Muscular</text>
+        </svg>
+        
+        <div>
+            <p class="part-label">Músculos Esqueléticos:</p>
+            <p>Son los músculos voluntarios que se adhieren a los huesos mediante tendones. Son responsables del movimiento consciente del cuerpo y mantienen la postura.</p>
+            
+            <p class="part-label">Músculos Lisos:</p>
+            <p>Son músculos involuntarios que se encuentran en órganos internos como el estómago, intestinos, vasos sanguíneos y vías respiratorias. Controlan funciones automáticas como la digestión y el flujo sanguíneo.</p>
+            
+            <p class="part-label">Músculo Cardíaco:</p>
+            <p>Es un tipo especial de músculo que se encuentra únicamente en el corazón. Tiene características tanto de músculo esquelético como liso, y se contrae y relaja de forma automática sin control consciente.</p>
+            
+            <p class="part-label">Fibras Musculares:</p>
+            <p>Son las células que componen el tejido muscular. Contienen miofibrillas, que a su vez contienen miofilamentos de actina y miosina, las proteínas responsables de la contracción muscular.</p>
+        </div>
+        
+        <div class="fun-fact">
+            <h3>¿Sabías que...?</h3>
+            <p>El músculo más fuerte del cuerpo humano en relación a su tamaño es el masetero, ubicado en la mandíbula, capaz de ejercer una presión de hasta 90 kg en los molares posteriores.</p>
+        </div>
+        
+        <div class="interactive-section">
+            <button class="start-quiz-btn" onclick="startQuiz('muscular')">Comenzar Quiz</button>
+            <button class="back-to-systems-btn" onclick="backToSystems()">Volver a Sistemas</button>
+        </div>
+    </div>
+    
+    <!-- Sección de Quiz -->
+    <div id="quiz-section" class="content-section quiz-section">
+        <h2 id="quiz-title">Quiz del Sistema</h2>
+        
+        <div id="quiz-container">
+            <div id="question-container" class="quiz-question">
+                <p id="question-text">Pregunta aquí</p>
+            </div>
+            
+            <div id="options-container" class="quiz-options">
+                <!-- Las opciones se generarán dinámicamente -->
+            </div>
+            
+            <div id="feedback" class="quiz-feedback">Feedback aquí</div>
+            
+            <button id="next-button" class="quiz-next-btn" style="display: none;">Siguiente Pregunta</button>
+        </div>
+        
+        <div id="quiz-results" class="quiz-results">
+            <div id="score-display" class="quiz-score"></div>
+            <p id="completion-message"></p>
+            <button id="retry-quiz-btn" class="quiz-next-btn" onclick="retryQuiz()">Reintentar Quiz</button>
+            <button class="back-to-systems-btn" onclick="backToSystems()">Volver a Sistemas</button>
+        </div>
+    </div>
+    
+    <script>
+        // Variables globales
+        let currentSystem = '';
+        let quizQuestions = {};
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalQuestions = 0;
+        
+        // Datos de los quiz
+        const quizData = {
+            circulatory: [
+                {
+                    question: "¿Cuál es la función principal del sistema circulatorio?",
+                    options: [
+                        "Digestión de alimentos",
+                        "Transporte de sustancias por todo el cuerpo",
+                        "Producción de hormonas",
+                        "Eliminación de desechos"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Qué células sanguíneas transportan oxígeno?",
+                    options: [
+                        "Glóbulos blancos",
+                        "Plaquetas",
+                        "Glóbulos rojos",
+                        "Linfocitos"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Cuántas cámaras tiene el corazón humano?",
+                    options: [
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Qué vasos sanguíneos llevan sangre desde el corazón a los tejidos?",
+                    options: [
+                        "Venas",
+                        "Capilares",
+                        "Arterias",
+                        "Vénulas"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Dónde se produce el intercambio de sustancias entre la sangre y los tejidos?",
+                    options: [
+                        "En las arterias",
+                        "En las venas",
+                        "En los capilares",
+                        "En el corazón"
+                    ],
+                    answer: 2
+                }
+            ],
+            respiratory: [
+                {
+                    question: "¿Cuál es la función principal del sistema respiratorio?",
+                    options: [
+                        "Bombear sangre por el cuerpo",
+                        "Digerir alimentos",
+                        "Realizar el intercambio de gases",
+                        "Producir hormonas"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Dónde ocurre el intercambio gaseoso en los pulmones?",
+                    options: [
+                        "En los bronquios",
+                        "En la tráquea",
+                        "En los alvéolos",
+                        "En la laringe"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Cuál es el músculo principal de la respiración?",
+                    options: [
+                        "Diafragma",
+                        "Bíceps",
+                        "Corazón",
+                        "Intercostales"
+                    ],
+                    answer: 0
+                },
+                {
+                    question: "¿Cuántos lóbulos tiene el pulmón derecho?",
+                    options: [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Qué gas expulsamos principalmente al exhalar?",
+                    options: [
+                        "Oxígeno",
+                        "Nitrógeno",
+                        "Dióxido de carbono",
+                        "Vapor de agua"
+                    ],
+                    answer: 2
+                }
+            ],
+            digestive: [
+                {
+                    question: "¿Dónde comienza la digestión química de los alimentos?",
+                    options: [
+                        "En el estómago",
+                        "En la boca",
+                        "En el intestino delgado",
+                        "En el hígado"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Cuál es el órgano más largo del sistema digestivo?",
+                    options: [
+                        "Esófago",
+                        "Estómago",
+                        "Intestino grueso",
+                        "Intestino delgado"
+                    ],
+                    answer: 3
+                },
+                {
+                    question: "¿Qué órgano produce la bilis?",
+                    options: [
+                        "Páncreas",
+                        "Vesícula biliar",
+                        "Hígado",
+                        "Estómago"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Dónde se absorbe la mayor parte de los nutrientes?",
+                    options: [
+                        "Estómago",
+                        "Intestino delgado",
+                        "Intestino grueso",
+                        "Esófago"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Qué movimiento impulsa los alimentos a través del sistema digestivo?",
+                    options: [
+                        "Peristaltismo",
+                        "Contracción muscular",
+                        "Gravedad",
+                        "Presión sanguínea"
+                    ],
+                    answer: 0
+                }
+            ],
+            nervous: [
+                {
+                    question: "¿Cuáles son las dos partes principales del sistema nervioso?",
+                    options: [
+                        "Cerebro y corazón",
+                        "Sistema nervioso central y periférico",
+                        "Neuronas y sinapsis",
+                        "Sistema sensorial y motor"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Qué células son las unidades funcionales del sistema nervioso?",
+                    options: [
+                        "Glóbulos rojos",
+                        "Neuronas",
+                        "Células gliales",
+                        "Células musculares"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Qué protege al cerebro y la médula espinal?",
+                    options: [
+                        "Piel",
+                        "Músculos",
+                        "Líquido cefalorraquídeo",
+                        "Tendones"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Cómo se llama la conexión entre dos neuronas?",
+                    options: [
+                        "Axón",
+                        "Dendrita",
+                        "Sinapsis",
+                        "Neurona"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Qué división del sistema nervioso controla las funciones involuntarias?",
+                    options: [
+                        "Sistema nervioso central",
+                        "Sistema nervioso somático",
+                        "Sistema nervioso autónomo",
+                        "Sistema nervioso periférico"
+                    ],
+                    answer: 2
+                }
+            ],
+            muscular: [
+                {
+                    question: "¿Cuántos tipos principales de tejido muscular hay en el cuerpo humano?",
+                    options: [
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Qué tipo de músculo podemos controlar voluntariamente?",
+                    options: [
+                        "Músculo liso",
+                        "Músculo cardíaco",
+                        "Músculo esquelético",
+                        "Ninguno de los anteriores"
+                    ],
+                    answer: 2
+                },
+                {
+                    question: "¿Qué proteínas son responsables de la contracción muscular?",
+                    options: [
+                        "Hemoglobina y mioglobina",
+                        "Actina y miosina",
+                        "Colágeno y elastina",
+                        "Queratina y fibrina"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Dónde se encuentra el músculo cardíaco?",
+                    options: [
+                        "En las extremidades",
+                        "En el corazón",
+                        "En el sistema digestivo",
+                        "En los vasos sanguíneos"
+                    ],
+                    answer: 1
+                },
+                {
+                    question: "¿Qué función NO realizan los músculos?",
+                    options: [
+                        "Producir movimiento",
+                        "Mantener la postura",
+                        "Generar calor corporal",
+                        "Producir hormonas"
+                    ],
+                    answer: 3
+                }
+            ]
+        };
+        
+        // Función para mostrar un sistema específico
+        function showSystem(system) {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Mostrar el contenido del sistema seleccionado
+            document.getElementById(`${system}-content`).style.display = 'block';
+            
+            // Guardar el sistema actual
+            currentSystem = system;
+            
+            // Scroll hasta el contenido
+            document.getElementById(`${system}-content`).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Función para volver a la selección de sistemas
+        function backToSystems() {
+            // Ocultar todos los contenidos
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            // Scroll hasta el inicio
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Función para iniciar el quiz
+        function startQuiz(system) {
+            // Ocultar la sección del sistema
+            document.getElementById(`${system}-content`).style.display = 'none';
+            
+            // Mostrar la sección del quiz
+            document.getElementById('quiz-section').style.display = 'block';
+            
+            // Establecer el título del quiz
+            document.getElementById('quiz-title').textContent = `Quiz del Sistema ${getSystemName(system)}`;
+            
+            // Inicializar variables del quiz
+            quizQuestions = quizData[system];
+            currentQuestionIndex = 0;
+            score = 0;
+            totalQuestions = quizQuestions.length;
+            
+            // Mostrar la primera pregunta
+            showQuestion();
+            
+            // Ocultar resultados y mostrar preguntas
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('quiz-results').style.display = 'none';
+            
+            // Scroll hasta el quiz
+            document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Función para mostrar una pregunta
+        function showQuestion() {
+            const question = quizQuestions[currentQuestionIndex];
+            
+            // Actualizar texto de la pregunta
+            document.getElementById('question-text').textContent = question.question;
+            
+            // Limpiar opciones anteriores
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            // Crear opciones
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'quiz-option';
+                optionElement.textContent = option;
+                optionElement.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            // Ocultar botón siguiente y feedback
+            document.getElementById('next-button').style.display = 'none';
+            document.getElementById('feedback').style.display = 'none';
+        }
+        
+        // Función para seleccionar una opción
+        function selectOption(optionIndex) {
+            const question = quizQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.quiz-option');
+            const feedback = document.getElementById('feedback');
+            
+            // Desactivar clic en opciones
+            options.forEach(option => {
+                option.onclick = null;
+            });
+            
+            // Verificar respuesta
+            if (optionIndex === question.answer) {
+                options[optionIndex].classList.add('correct');
+                feedback.textContent = '¡Correcto!';
+                feedback.style.color = 'green';
+                score++;
+            } else {
+                options[optionIndex].classList.add('incorrect');
+                options[question.answer].classList.add('correct');
+                feedback.textContent = '¡Incorrecto! La respuesta correcta está resaltada.';
+                feedback.style.color = 'red';
+            }
+            
+            // Mostrar feedback
+            feedback.style.display = 'block';
+            
+            // Mostrar botón siguiente o finalizar
+            const nextButton = document.getElementById('next-button');
+            nextButton.style.display = 'block';
+            
+            if (currentQuestionIndex < totalQuestions - 1) {
+                nextButton.textContent = 'Siguiente Pregunta';
+                nextButton.onclick = nextQuestion;
+            } else {
+                nextButton.textContent = 'Ver Resultados';
+                nextButton.onclick = showResults;
+            }
+        }
+        
+        // Función para pasar a la siguiente pregunta
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+        
+        // Función para mostrar los resultados
+        function showResults() {
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('quiz-results').style.display = 'block';
+            
+            // Calcular porcentaje
+            const percentage = (score / totalQuestions) * 100;
+            
+            // Mostrar puntuación
+            document.getElementById('score-display').textContent = `Tu puntuación: ${score}/${totalQuestions} (${percentage}%)`;
+            
+            // Mensaje de finalización
+            let completionMessage = '';
+            if (percentage >= 80) {
+                completionMessage = '¡Excelente! Tienes un gran conocimiento del sistema.';
+            } else if (percentage >= 60) {
+                completionMessage = '¡Buen trabajo! Tienes un conocimiento sólido del sistema.';
+            } else {
+                completionMessage = 'Puedes mejorar tu conocimiento del sistema. ¡Inténtalo de nuevo!';
+            }
+            
+            document.getElementById('completion-message').textContent = completionMessage;
+        }
+        
+        // Función para reintentar el quiz
+        function retryQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('quiz-results').style.display = 'none';
+            
+            showQuestion();
+        }
+        
+        // Función para obtener el nombre del sistema
+        function getSystemName(system) {
+            const names = {
+                'circulatory': 'Circulatorio',
+                'respiratory': 'Respiratorio',
+                'digestive': 'Digestivo',
+                'nervous': 'Nervioso',
+                'muscular': 'Muscular'
+            };
+            
+            return names[system] || system;
+        }
+    </script>
+</body>
+</html>
